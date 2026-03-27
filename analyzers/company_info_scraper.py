@@ -455,4 +455,4 @@ class CompanyInfoScraper:
 
     def get_structured_data(self) -> dict:
         """構造化データをそのまま返す（直接スプレッドシートに書き込み用）"""
-        return self.scrape_with_search()
+        return self.scrape()
