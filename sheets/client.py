@@ -14,7 +14,18 @@ SCOPES = [
 
 
 def get_client() -> gspread.Client:
-    """認証済みgspreadクライアントを返す"""
+    """認証済みgspreadクライアントを返す（Streamlit Cloud対応）"""
+    # Streamlit Cloud: st.secretsからサービスアカウント情報を読む
+    try:
+        import streamlit as st
+        if "gcp_service_account" in st.secrets:
+            info = dict(st.secrets["gcp_service_account"])
+            credentials = Credentials.from_service_account_info(info, scopes=SCOPES)
+            return gspread.authorize(credentials)
+    except Exception:
+        pass
+
+    # ローカル: ファイルから読む
     creds_path = Path(GOOGLE_SERVICE_ACCOUNT_FILE)
     if not creds_path.exists():
         raise FileNotFoundError(
