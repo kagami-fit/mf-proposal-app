@@ -148,6 +148,7 @@ def _get_custom_css() -> str:
         visibility: visible;
         position: absolute;
         left: 0;
+        letter-spacing: 0.05em;
     }}
     section[data-testid="stSidebar"] * {{
         color: {COLORS["white"]} !important;
