@@ -44,30 +44,34 @@ COL = {
     "estimated_challenges": 12,
     "estimated_needs": 13,
     "confidence_score": 14,
-    "analysis_date": 15,
-    "analysis_notes": 16,
-    "status": 17,
-    "email": 21,
-    "phone": 22,
-    "fax": 23,
-    "address": 24,
-    "contact_url": 25,
-    "contact_form_url": 26,
-    "representative": 27,
-    "established": 28,
-    "capital": 29,
-    "revenue": 30,
-    "listed": 31,
+    "proposal_status": 15,
+    "proposal_date": 16,
+    "send_date": 17,
+    "email": 18,
+    "phone": 19,
+    "fax": 20,
+    "address": 21,
+    "contact_url": 22,
+    "contact_form_url": 23,
+    "representative": 24,
+    "established": 25,
+    "capital": 26,
+    "revenue": 27,
+    "listed": 28,
+    "memo": 29,
+    "analysis_date": 30,
+    "analysis_notes": 31,
+    "status": 32,
 }
 
 
-def _save_all_to_sheet(company_id: str, analysis: Analysis, contact: dict, llm_data: dict):
+def _save_all_to_sheet(company_id: str, analysis: Analysis, contact: dict, llm_data: dict, structured_info: dict | None = None):
     """分析結果・連絡先・企業概要をスプレッドシートに直接書き込む"""
     row_idx = find_row_by_id(SHEET_MASTER, company_id)
     if row_idx is None:
         return
 
-    # --- 分析結果 (9-16列) ---
+    # --- 分析結果 ---
     update_cell(SHEET_MASTER, row_idx, COL["industry"], analysis.industry)
     update_cell(SHEET_MASTER, row_idx, COL["employee_scale"], analysis.employee_scale)
     update_cell(SHEET_MASTER, row_idx, COL["health_efforts"], analysis.health_management_efforts)
@@ -78,19 +82,20 @@ def _save_all_to_sheet(company_id: str, analysis: Analysis, contact: dict, llm_d
     update_cell(SHEET_MASTER, row_idx, COL["analysis_notes"], analysis.analysis_notes)
     update_cell(SHEET_MASTER, row_idx, COL["status"], "分析済み")
 
-    # --- 連絡先 (21-26列) ---
+    # --- 連絡先 ---
     for key in ["email", "phone", "fax", "address", "contact_url", "contact_form_url"]:
         val = contact.get(key, "")
         if val:
             update_cell(SHEET_MASTER, row_idx, COL[key], val)
 
-    # --- 企業概要 (27-31列) ---
+    # --- 企業概要（構造化データ優先 → LLMデータで補完） ---
+    si = structured_info or {}
     for key in ["representative", "established", "capital", "revenue", "listed"]:
-        val = llm_data.get(key, "")
+        val = si.get(key) or llm_data.get(key, "")
         if val:
             update_cell(SHEET_MASTER, row_idx, COL[key], val)
 
-    # --- 企業URL (3列目) ---
+    # --- 企業URL ---
     if llm_data.get("corporate_url"):
         update_cell(SHEET_MASTER, row_idx, COL["url"], llm_data["corporate_url"])
 
@@ -242,7 +247,7 @@ def _run_full_analysis(target: CompanyMaster, use_enrichment: bool = True, statu
             llm_data[key] = structured_info[key]
 
     # === 全項目をスプレッドシートに直接書き込み ===
-    _save_all_to_sheet(target.id, analysis, contact_info, llm_data)
+    _save_all_to_sheet(target.id, analysis, contact_info, llm_data, structured_info)
 
     return analysis, contact_info, llm_data
 

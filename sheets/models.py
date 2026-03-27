@@ -197,14 +197,9 @@ class CompanyMaster(BaseModel):
     health_efforts: str = Field(default="", description="健康経営への取り組み")
     estimated_challenges: str = Field(default="", description="推定課題")
     estimated_needs: str = Field(default="", description="推定ニーズ")
-
-    # --- 分析メタ ---
     confidence_score: str = Field(default="", description="確信度")
-    analysis_date: str = Field(default="", description="分析日")
-    analysis_notes: str = Field(default="", description="分析メモ")
 
-    # --- 提案・進捗 ---
-    status: str = Field(default="新規", description="進捗ステータス")
+    # --- 提案 ---
     proposal_status: str = Field(default="", description="提案ステータス")
     proposal_date: str = Field(default="", description="提案作成日")
     send_date: str = Field(default="", description="送信日")
@@ -227,6 +222,11 @@ class CompanyMaster(BaseModel):
     # --- 自由記入 ---
     memo: str = Field(default="", description="メモ")
 
+    # --- 分析メタ・進捗（最後列） ---
+    analysis_date: str = Field(default="", description="分析日")
+    analysis_notes: str = Field(default="", description="分析メモ")
+    status: str = Field(default="新規", description="進捗ステータス")
+
     # カラム数: 32
 
     def to_row(self) -> list[str]:
@@ -245,9 +245,6 @@ class CompanyMaster(BaseModel):
             self.estimated_challenges,
             self.estimated_needs,
             self.confidence_score,
-            self.analysis_date,
-            self.analysis_notes,
-            self.status,
             self.proposal_status,
             self.proposal_date,
             self.send_date,
@@ -263,6 +260,9 @@ class CompanyMaster(BaseModel):
             self.revenue,
             self.listed,
             self.memo,
+            self.analysis_date,
+            self.analysis_notes,
+            self.status,
         ]
 
     @classmethod
@@ -282,9 +282,6 @@ class CompanyMaster(BaseModel):
             "推定課題",
             "推定ニーズ",
             "確信度",
-            "分析日",
-            "分析メモ",
-            "進捗ステータス",
             "提案ステータス",
             "提案作成日",
             "送信日",
@@ -300,6 +297,9 @@ class CompanyMaster(BaseModel):
             "売上高",
             "上場区分",
             "メモ",
+            "分析日",
+            "分析メモ",
+            "進捗ステータス",
         ]
 
     COL_COUNT: ClassVar[int] = 32
@@ -322,24 +322,24 @@ class CompanyMaster(BaseModel):
             estimated_challenges=padded[11],
             estimated_needs=padded[12],
             confidence_score=padded[13],
-            analysis_date=padded[14],
-            analysis_notes=padded[15],
-            status=padded[16] or "新規",
-            proposal_status=padded[17],
-            proposal_date=padded[18],
-            send_date=padded[19],
-            email=padded[20],
-            phone=padded[21],
-            fax=padded[22],
-            address=padded[23],
-            contact_url=padded[24],
-            contact_form_url=padded[25],
-            representative=padded[26],
-            established=padded[27],
-            capital=padded[28],
-            revenue=padded[29],
-            listed=padded[30],
-            memo=padded[31],
+            proposal_status=padded[14],
+            proposal_date=padded[15],
+            send_date=padded[16],
+            email=padded[17],
+            phone=padded[18],
+            fax=padded[19],
+            address=padded[20],
+            contact_url=padded[21],
+            contact_form_url=padded[22],
+            representative=padded[23],
+            established=padded[24],
+            capital=padded[25],
+            revenue=padded[26],
+            listed=padded[27],
+            memo=padded[28],
+            analysis_date=padded[29],
+            analysis_notes=padded[30],
+            status=padded[31] or "新規",
         )
 
     @classmethod
