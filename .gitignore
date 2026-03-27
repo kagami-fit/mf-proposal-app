@@ -4,3 +4,4 @@ screenshots/
 __pycache__/
 *.pyc
 .DS_Store
+secrets_template.toml
