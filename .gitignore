@@ -1,0 +1,6 @@
+.env
+credentials/
+screenshots/
+__pycache__/
+*.pyc
+.DS_Store
