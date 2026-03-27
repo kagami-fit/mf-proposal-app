@@ -246,6 +246,30 @@ def _run_full_analysis(target: CompanyMaster, use_enrichment: bool = True, statu
             # 構造化データ（HP/PR TIMES）を優先（より正確）
             llm_data[key] = structured_info[key]
 
+    # Step 7: 空フィールドの補完（2回目のLLM呼び出し）
+    all_merged = {**llm_data, **contact_info, "industry": analysis.industry, "employee_scale": analysis.employee_scale}
+    important_fields = ["representative", "established", "capital", "revenue", "listed",
+                        "employee_scale", "phone", "address", "email", "contact_url"]
+    missing_count = sum(1 for f in important_fields if not all_merged.get(f))
+
+    if missing_count >= 2:
+        with sc.status(f"🔄 不足項目を補完中（{missing_count}項目）...", expanded=False) as s:
+            fill_result = analyzer.fill_missing_fields(target.name, url or "", all_merged)
+            filled_new = 0
+            for key in important_fields:
+                if fill_result.get(key) and not all_merged.get(key):
+                    filled_new += 1
+                    # 補完結果を適切な辞書に反映
+                    if key in ["email", "phone", "fax", "address", "contact_url", "contact_form_url"]:
+                        contact_info[key] = fill_result[key]
+                    elif key in ["employee_scale"]:
+                        analysis.employee_scale = fill_result[key]
+                    elif key in ["industry"]:
+                        analysis.industry = fill_result[key]
+                    else:
+                        llm_data[key] = fill_result[key]
+            s.write(f"✅ {filled_new}項目を追加補完しました")
+
     # === 全項目をスプレッドシートに直接書き込み ===
     _save_all_to_sheet(target.id, analysis, contact_info, llm_data, structured_info)
 

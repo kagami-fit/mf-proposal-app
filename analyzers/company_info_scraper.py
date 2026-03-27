@@ -5,7 +5,7 @@
 """
 
 import re
-from urllib.parse import quote, urljoin, urlparse
+from urllib.parse import quote, urljoin
 
 import requests
 from bs4 import BeautifulSoup
@@ -87,12 +87,13 @@ _LABEL_MAP = {
 class CompanyInfoScraper:
     """企業の会社概要ページやPR TIMESから構造化された企業情報を取得"""
 
-    # 会社概要ページの候補パス
+    # 会社概要ページの候補パス（よくある順）
     COMPANY_PATHS = [
         "/company",
         "/company/",
         "/about",
         "/about/",
+        "/",
         "/corporate",
         "/corporate/",
         "/company/overview",
@@ -178,8 +179,19 @@ class CompanyInfoScraper:
                     if v and not result.get(k):
                         result[k] = v
 
-            # 十分な情報が取れたら終了
-            if len(result) >= 4:
+            # テキスト全体からパターンマッチで抽出（table/dlに入っていない場合）
+            text_data = self._extract_from_text(page["text"])
+            if text_data:
+                for k, v in text_data.items():
+                    if v and not result.get(k):
+                        result[k] = v
+
+            # 主要項目がすべて埋まったら終了
+            key_fields = {"representative", "established", "capital", "address", "phone", "employee_scale"}
+            if key_fields.issubset(result.keys()):
+                break
+            # ある程度取れて、複数ページ試したら終了
+            if len(result) >= 8:
                 break
 
         return result
@@ -210,6 +222,50 @@ class CompanyInfoScraper:
                 key = self._match_label(label)
                 if key and value:
                     result[key] = self._clean_value(key, value)
+        return result
+
+    def _extract_from_text(self, text: str) -> dict:
+        """ページ全文からパターンマッチで企業情報を抽出"""
+        result = {}
+
+        # 電話番号
+        m = re.search(r"(?:TEL|Tel|tel|電話番号?)[：:\s]*(\+?0\d{1,4}[-ー‐]\d{1,4}[-ー‐]\d{3,4})", text)
+        if m:
+            result["phone"] = m.group(1).strip()
+
+        # FAX
+        m = re.search(r"(?:FAX|Fax|fax)[：:\s]*(\+?0\d{1,4}[-ー‐]\d{1,4}[-ー‐]\d{3,4})", text)
+        if m:
+            result["fax"] = m.group(1).strip()
+
+        # メールアドレス
+        m = re.search(r"[\w.+-]+@[\w-]+\.[\w.-]+", text)
+        if m:
+            email = m.group(0)
+            # 画像ファイル等を除外
+            if not any(ext in email for ext in [".png", ".jpg", ".gif", ".svg"]):
+                result["email"] = email
+
+        # 住所（〒付き）
+        m = re.search(r"〒?\d{3}[-ー]\d{4}\s*(.{2,4}[都道府県].+?)(?:\n|TEL|Tel|電話|FAX|$)", text)
+        if m:
+            result["address"] = m.group(0).strip()[:100]
+
+        # 設立年
+        m = re.search(r"(?:設立|創業|創立)[：:\s]*((?:19|20)\d{2}年\d{0,2}月?\d{0,2}日?)", text)
+        if m:
+            result["established"] = m.group(1).strip()
+
+        # 資本金
+        m = re.search(r"資本金[：:\s]*([\d,，.]+\s*(?:億|万|百万)?円)", text)
+        if m:
+            result["capital"] = m.group(1).strip()
+
+        # 代表者
+        m = re.search(r"代表取締役(?:社長)?[：:\s]*([^\s、,()（）\n]{2,8}(?:\s+[^\s、,()（）\n]{1,6})?)", text)
+        if m:
+            result["representative"] = f"代表取締役 {m.group(1).strip()}"
+
         return result
 
     # ─── PR TIMES ───
@@ -399,4 +455,4 @@ class CompanyInfoScraper:
 
     def get_structured_data(self) -> dict:
         """構造化データをそのまま返す（直接スプレッドシートに書き込み用）"""
-        return self.scrape()
+        return self.scrape_with_search()
