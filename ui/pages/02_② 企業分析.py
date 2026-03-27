@@ -10,9 +10,10 @@ import streamlit as st
 
 st.set_page_config(page_title="企業分析", page_icon="🔍", layout="wide")
 
-from ui.theme import page_header, section_header, COLORS
+from ui.theme import page_header, section_header, progress_bar, COLORS
 
 page_header("企業分析", "企業HP + 外部ソースをAIで分析し、健康経営の課題を特定します")
+progress_bar(2)
 
 try:
     from sheets.sync import (

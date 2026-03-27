@@ -69,6 +69,35 @@ def metric_card(label: str, value: str, sub: str = "", accent: bool = False):
     )
 
 
+WORKFLOW_STEPS = [
+    {"num": "①", "label": "企業収集", "page": "① 企業収集"},
+    {"num": "②", "label": "企業分析", "page": "② 企業分析"},
+    {"num": "③", "label": "提案作成", "page": "③ 提案作成"},
+    {"num": "④", "label": "フォーム送信", "page": "④ フォーム送信"},
+]
+
+
+def progress_bar(current_step: int):
+    """ワークフロー進捗バー。current_step は 1〜4。"""
+    items_html = ""
+    for i, step in enumerate(WORKFLOW_STEPS, 1):
+        if i < current_step:
+            status = "done"
+        elif i == current_step:
+            status = "active"
+        else:
+            status = "upcoming"
+        items_html += f'<div class="fr-step {status}"><span class="fr-step-num">{step["num"]}</span><span class="fr-step-label">{step["label"]}</span></div>'
+        if i < len(WORKFLOW_STEPS):
+            arrow_status = "done" if i < current_step else ""
+            items_html += f'<div class="fr-step-arrow {arrow_status}">▶</div>'
+
+    st.markdown(
+        f'<div class="fr-progress-bar">{items_html}</div>',
+        unsafe_allow_html=True,
+    )
+
+
 def info_card(title: str, content: str, border_color: str = ""):
     """情報カード"""
     bc = border_color or COLORS["accent"]
@@ -403,6 +432,112 @@ def _get_custom_css() -> str:
     .fr-table .highlight {{
         background: {COLORS["gold"]};
         color: {COLORS["white"]};
+    }}
+
+    /* ============================================================
+       Workflow Progress Bar
+       ============================================================ */
+    .fr-progress-bar {{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.3rem;
+        padding: 1rem 0;
+        margin-bottom: 1.5rem;
+        background: {COLORS["bg_white"]};
+        border-radius: 4px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    }}
+    .fr-step {{
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-family: 'Noto Sans JP', sans-serif;
+        font-weight: 700;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }}
+    .fr-step.active {{
+        background: {COLORS["accent"]};
+        color: {COLORS["white"]};
+        box-shadow: 0 2px 8px rgba(228,0,111,0.3);
+    }}
+    .fr-step.done {{
+        background: {COLORS["primary_dark"]};
+        color: {COLORS["white"]};
+    }}
+    .fr-step.upcoming {{
+        background: {COLORS["bg_light"]};
+        color: {COLORS["secondary"]};
+    }}
+    .fr-step-num {{
+        font-size: 1rem;
+    }}
+    .fr-step-label {{
+        font-size: 0.85rem;
+    }}
+    .fr-step-arrow {{
+        color: {COLORS["bg_light"]};
+        font-size: 0.7rem;
+        margin: 0 0.1rem;
+    }}
+    .fr-step-arrow.done {{
+        color: {COLORS["primary_dark"]};
+    }}
+
+    /* ============================================================
+       Flow Card (Top page)
+       ============================================================ */
+    .fr-flow-container {{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+        margin: 2rem 0;
+        flex-wrap: wrap;
+    }}
+    .fr-flow-card {{
+        background: {COLORS["primary_dark"]};
+        color: {COLORS["white"]};
+        border-radius: 8px;
+        padding: 1.8rem 1.5rem;
+        text-align: center;
+        width: 200px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }}
+    .fr-flow-card:hover {{
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }}
+    .fr-flow-card.accent {{
+        background: {COLORS["accent"]};
+    }}
+    .fr-flow-num {{
+        font-family: 'Oswald', sans-serif;
+        font-size: 2rem;
+        font-weight: 500;
+        opacity: 0.7;
+        margin-bottom: 0.3rem;
+    }}
+    .fr-flow-title {{
+        font-family: 'Noto Sans JP', sans-serif;
+        font-weight: 700;
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }}
+    .fr-flow-desc {{
+        font-size: 0.75rem;
+        opacity: 0.7;
+        line-height: 1.5;
+    }}
+    .fr-flow-arrow {{
+        font-size: 1.8rem;
+        color: {COLORS["secondary"]};
+        margin: 0 0.5rem;
     }}
 
     /* ============================================================

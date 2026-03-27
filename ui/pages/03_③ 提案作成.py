@@ -9,9 +9,10 @@ import streamlit as st
 
 st.set_page_config(page_title="提案作成", page_icon="📝", layout="wide")
 
-from ui.theme import page_header, section_header, COLORS
+from ui.theme import page_header, section_header, progress_bar, COLORS
 
 page_header("提案作成", "分析結果をもとにAIが提案文を自動生成します")
+progress_bar(3)
 
 try:
     from sheets.sync import (

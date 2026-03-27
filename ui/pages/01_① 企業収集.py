@@ -9,9 +9,10 @@ import streamlit as st
 
 st.set_page_config(page_title="企業収集", page_icon="📡", layout="wide")
 
-from ui.theme import page_header, section_header, COLORS
+from ui.theme import page_header, section_header, progress_bar, COLORS
 
 page_header("企業収集", "複数チャネルから健康経営に関心のある企業を収集します")
+progress_bar(1)
 
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "認定企業リスト",

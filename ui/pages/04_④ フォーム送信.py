@@ -10,9 +10,10 @@ import streamlit as st
 
 st.set_page_config(page_title="フォーム送信", page_icon="📮", layout="wide")
 
-from ui.theme import page_header
+from ui.theme import page_header, progress_bar
 
 page_header("フォーム送信", "問い合わせフォームへの自動入力・確認・送信")
+progress_bar(4)
 
 # 保存済み送信者設定を読み込み
 SETTINGS_FILE = Path(__file__).parent.parent.parent / "data" / "sender_settings.json"
