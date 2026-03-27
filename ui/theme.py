@@ -132,6 +132,14 @@ def _get_custom_css() -> str:
     section[data-testid="stSidebar"] {{
         background: {COLORS["primary_dark"]};
     }}
+    /* Rename "app" to "TOP" in sidebar */
+    section[data-testid="stSidebar"] [data-testid="stSidebarNavLink"]:first-child span {{
+        font-size: 0;
+    }}
+    section[data-testid="stSidebar"] [data-testid="stSidebarNavLink"]:first-child span::after {{
+        content: "TOP";
+        font-size: 0.875rem;
+    }}
     section[data-testid="stSidebar"] * {{
         color: {COLORS["white"]} !important;
     }}
