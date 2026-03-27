@@ -137,18 +137,15 @@ def _get_custom_css() -> str:
     section[data-testid="stSidebar"] li:first-child a span,
     section[data-testid="stSidebar"] [data-testid="stSidebarNavItems"] > li:first-child span,
     section[data-testid="stSidebar"] [data-testid="stSidebarNav"] li:first-child span {{
-        visibility: hidden;
-        position: relative;
+        font-size: 0 !important;
+        overflow: visible !important;
     }}
     section[data-testid="stSidebar"] a[href="/"] span::after,
     section[data-testid="stSidebar"] li:first-child a span::after,
     section[data-testid="stSidebar"] [data-testid="stSidebarNavItems"] > li:first-child span::after,
     section[data-testid="stSidebar"] [data-testid="stSidebarNav"] li:first-child span::after {{
         content: "TOP";
-        visibility: visible;
-        position: absolute;
-        left: 0;
-        letter-spacing: 0.05em;
+        font-size: 0.875rem !important;
     }}
     section[data-testid="stSidebar"] * {{
         color: {COLORS["white"]} !important;
