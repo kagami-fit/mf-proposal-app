@@ -14,6 +14,10 @@ from ui.theme import page_header, section_header, progress_bar, COLORS
 page_header("企業収集", "複数チャネルから健康経営に関心のある企業を収集します")
 progress_bar(1)
 
+from config.settings import GOOGLE_SPREADSHEET_ID
+if GOOGLE_SPREADSHEET_ID:
+    st.markdown(f"[📊 マスターシートを開く](https://docs.google.com/spreadsheets/d/{GOOGLE_SPREADSHEET_ID})", unsafe_allow_html=True)
+
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "認定企業リスト",
     "Google News",

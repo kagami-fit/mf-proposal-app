@@ -15,6 +15,10 @@ from ui.theme import page_header, section_header, progress_bar, COLORS
 page_header("企業分析", "企業HP + 外部ソースをAIで分析し、健康経営の課題を特定します")
 progress_bar(2)
 
+from config.settings import GOOGLE_SPREADSHEET_ID
+if GOOGLE_SPREADSHEET_ID:
+    st.markdown(f"[📊 マスターシートを開く](https://docs.google.com/spreadsheets/d/{GOOGLE_SPREADSHEET_ID})", unsafe_allow_html=True)
+
 try:
     from sheets.sync import (
         master_read_all, find_row_by_id, update_cell, SHEET_MASTER,
