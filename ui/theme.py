@@ -133,12 +133,21 @@ def _get_custom_css() -> str:
         background: {COLORS["primary_dark"]};
     }}
     /* Rename "app" to "TOP" in sidebar */
-    section[data-testid="stSidebar"] [data-testid="stSidebarNavLink"]:first-child span {{
-        font-size: 0;
+    section[data-testid="stSidebar"] a[href="/"] span,
+    section[data-testid="stSidebar"] li:first-child a span,
+    section[data-testid="stSidebar"] [data-testid="stSidebarNavItems"] > li:first-child span,
+    section[data-testid="stSidebar"] [data-testid="stSidebarNav"] li:first-child span {{
+        visibility: hidden;
+        position: relative;
     }}
-    section[data-testid="stSidebar"] [data-testid="stSidebarNavLink"]:first-child span::after {{
+    section[data-testid="stSidebar"] a[href="/"] span::after,
+    section[data-testid="stSidebar"] li:first-child a span::after,
+    section[data-testid="stSidebar"] [data-testid="stSidebarNavItems"] > li:first-child span::after,
+    section[data-testid="stSidebar"] [data-testid="stSidebarNav"] li:first-child span::after {{
         content: "TOP";
-        font-size: 0.875rem;
+        visibility: visible;
+        position: absolute;
+        left: 0;
     }}
     section[data-testid="stSidebar"] * {{
         color: {COLORS["white"]} !important;
