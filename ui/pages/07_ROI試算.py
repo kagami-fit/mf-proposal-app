@@ -270,7 +270,7 @@ st.download_button(
 # Footer
 st.markdown(
     f"""<div class="fr-footer">
-        フォーム営業管理シート &mdash; ROI試算
+        MF企業分析・提案ツール &mdash; ROI試算
     </div>""",
     unsafe_allow_html=True,
 )

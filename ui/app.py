@@ -3,7 +3,7 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="フォーム営業管理シート",
+    page_title="MF企業分析・提案ツール",
     page_icon="🏢",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -14,7 +14,7 @@ from ui.theme import apply_theme, page_header, section_header, COLORS
 apply_theme()
 
 page_header(
-    "フォーム営業管理シート",
+    "MF企業分析・提案ツール",
     "健康経営に関心のある企業を収集・分析し、提案文を生成する統合プラットフォーム",
 )
 
@@ -130,7 +130,7 @@ with col3:
 st.markdown(
     f"""
     <div class="fr-footer">
-        フォーム営業管理シート &mdash; Powered by Claude AI
+        MF企業分析・提案ツール &mdash; Powered by Claude AI
     </div>
     """,
     unsafe_allow_html=True,
