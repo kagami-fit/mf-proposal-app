@@ -113,14 +113,18 @@ with col2:
         st.error(f"Claude API: {e}")
 
 with col3:
-    try:
-        from playwright.sync_api import sync_playwright
-        with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
-            browser.close()
-        st.success("Playwright: 起動OK")
-    except Exception as e:
-        st.error(f"Playwright: {e}")
+    import os
+    if os.environ.get("STREAMLIT_SHARING_MODE") or os.path.exists("/home/appuser"):
+        st.info("Playwright: クラウド環境では利用不可（ローカル専用）")
+    else:
+        try:
+            from playwright.sync_api import sync_playwright
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=True)
+                browser.close()
+            st.success("Playwright: 起動OK")
+        except Exception as e:
+            st.error(f"Playwright: {e}")
 
 # Footer
 st.markdown(
